@@ -1,3 +1,5 @@
+import jdk.nashorn.api.tree.Tree;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -39,11 +41,12 @@ public class  BST<E extends Comparable<E>> implements TreeInterface<E> {
         }
     }// end isEmpty
 
-    // Looks for an item in the tree
+    // By: Jorge Martinez
+    // Searches for a node in the tree
     public boolean search(E e){
         TreeNode<E> focusNode = root;
         while(focusNode.getElement().compareTo(e) != 0){
-            if(focusNode.getElement().compareTo(e) > 0 ){
+            if(e.compareTo(focusNode.getElement()) < 0 ){
                 focusNode = focusNode.getLeft();
             } else {
                 focusNode = focusNode.getRight();
@@ -53,31 +56,40 @@ public class  BST<E extends Comparable<E>> implements TreeInterface<E> {
                 return false;
             }
         }
-        System.out.print("Node found: ");
+        System.out.println("Node Analysis:");
+        System.out.println("Node " + e + " found: ");
+        if(focusNode.getParent() != null)
+            System.out.println("Node's parent is: " + focusNode.getParent().getElement());
+        if(focusNode.getLeft() != null)
+            System.out.println("Node's left child is: " + focusNode.getLeft().getElement());
+        if(focusNode.getRight() != null)
+            System.out.println("Node's right child is: " + focusNode.getRight().getElement());
         return true;
     } // end search method
 
+    // By: Jorge Martinez
+    // Inserts a node to the tree
     public void insert(E e) {
         TreeNode<E> newNode = new TreeNode<>();
         newNode.setElement(e);
-        //System.out.println(newNode.getElement());
         if(root == null){
             root = newNode;
             size++;
         } else {
-            TreeNode<E> focusNode  = root;
-            while(focusNode.getElement().compareTo(e) != 0){
-                focusNode.setParent(focusNode);
-                if(focusNode.getElement().compareTo(e) > 0){
-                    if(focusNode.getLeft() == null){
-                        focusNode.parent.setLeft(newNode);
+            TreeNode<E> focusNode = root;
+            while (e.compareTo(focusNode.getElement()) != 0) {
+                newNode.setParent(focusNode);
+                if (e.compareTo(focusNode.getElement()) < 0) {
+                    if (focusNode.getLeft() == null) {
+                        //System.out.println(focusNode.getElement());
+                        focusNode.setLeft(newNode);
                         size++;
                         return;
                     } else
                         focusNode = focusNode.getLeft();
                 } else {
-                    if(focusNode.getRight() == null){
-                        focusNode.parent.setRight(newNode);
+                    if (focusNode.getRight() == null) {
+                        focusNode.setRight(newNode);
                         size++;
                         return;
                     } else
@@ -90,64 +102,7 @@ public class  BST<E extends Comparable<E>> implements TreeInterface<E> {
 
     public boolean delete(E e) {
 
-        // We search for the element that we want to delete
-        boolean isItLeftChild = true;
-        TreeNode<E> focusNode = root;
-        //while(focusNode.getElement() != e){
-        while(focusNode.getElement().compareTo(e) != 0){
-            focusNode.parent = focusNode;
-            if(focusNode.getElement().compareTo(e) > 0){
-                focusNode = focusNode.getLeft();
-                isItLeftChild = true;
-            } else {
-                focusNode = focusNode.getRight();
-                isItLeftChild = false;
-            }
-            //System.out.println(focusNode.getElement());
-        }
-
-        // If node has no children
-        if(focusNode.getLeft() == null && focusNode.getRight() == null){
-                focusNode.parent = null;
-        // if the node has one child
-        } else if(focusNode.getLeft() == null || focusNode.getRight() == null){
-            if(isItLeftChild)
-                focusNode.parent.setLeft(focusNode.getLeft());
-            else
-                focusNode.parent.setRight(focusNode.getRight());
-        // if the node has two children
-        } else {
-            //TreeNode<E> s = inorderSuccessor(focusNode);
-            if(isItLeftChild)
-                focusNode.parent.setLeft(focusNode.getRight());
-            else
-                focusNode.parent.setRight(focusNode.getLeft());
-        }
-        size--;
-        System.out.print("Node " + e + " was deleted: ");
-        return true;
-    }
-
-    // helper function to find the inorder successor
-    public TreeNode<E> inorderSuccessor(TreeNode<E> replacedNode){
-        TreeNode<E> current = replacedNode;
-        if(replacedNode.getRight() != null) {
-            current.parent = current;
-            current = replacedNode.getRight();
-            while (current.getLeft() != null) {
-                current.parent = current;
-                current = current.getLeft();
-            }
-            return current;
-        } else {
-            while(current.parent != null){
-                if(current == current.parent.getLeft())
-                    return current.parent;
-                else
-                    current = current.parent;
-            }
-            return null;
-        }
+	return true;
     }
 
     // returns the size of the tree
@@ -172,31 +127,40 @@ public class  BST<E extends Comparable<E>> implements TreeInterface<E> {
         return nonleaves;
     }
 
+    // By: Jorge Martinez
     //(Implement inorder traversal without using recursion)
     public ArrayList<E>  inorderNoRecursion()
     {
         ArrayList<E> nonRecursiveInorder= new ArrayList<>();
 
+        // Morris' Inorder Traversal Algorithm
         TreeNode<E> current = root;
-        while(current.getLeft() != null) {
-            current = current.getLeft();
-        }
-
+        TreeNode<E> predecessor;
         while(current != null){
-            System.out.println(current.getElement());
-            current = inorderSuccessor(current);
+            if(current.left == null){
+                nonRecursiveInorder.add(current.getElement());
+                current = current.getRight();
+            } else {
+                predecessor = current.getLeft();
+                while(predecessor.getRight() != current && predecessor.getRight() != null){
+                    predecessor = predecessor.getRight();
+                }
+                if(predecessor.getRight() == null){
+                    predecessor.setRight(current);
+                    current = current.getLeft();
+                } else{
+                    predecessor.setRight(null);
+                    nonRecursiveInorder.add(current.getElement());
+                    current = current.getRight();
+                }
+            }
         }
-
         return nonRecursiveInorder;
     }
-
 
     // traversal with recursion
     public ArrayList<E> inorder() {
 
-        /*
-
-        */
         return inOrderTraversal;
     }//end of inorder
 
@@ -221,3 +185,4 @@ public class  BST<E extends Comparable<E>> implements TreeInterface<E> {
     }
 
 }// end class BST
+

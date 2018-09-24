@@ -1,4 +1,4 @@
-import jdk.nashorn.api.tree.*;
+//import jdk.nashorn.api.tree.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,123 +100,23 @@ public class  BST<E extends Comparable<E>> implements TreeInterface<E> {
         }
     }
 
-    By: Jorge Martinez
     public boolean delete(E e) {
-        TreeNode<E> focusNode = root;
-        TreeNode<E> parent = root;
+        /*
+        Stack<TreeNode> in = new Stack<TreeNode>();
+        Stack<TreeNode> post = new Stack<TreeNode>();
+        TreeNode current = root;
 
-        // finding the node to be deleted
-        Boolean isItOnLeft = true;
-        if(root == null){
-            System.out.println("Empty tree; node not found.");
-            return false;
-        } else{
-            while(e.compareTo(focusNode.getElement()) != 0){
-                parent = focusNode;
-                if(e.compareTo(focusNode.getElement()) < 0){
-                    focusNode = focusNode.getLeft();
-                    isItOnLeft = true;
-                } else{
-                    focusNode = focusNode.getRight();
-                    isItOnLeft = false;
-                }
-            }
-        } // END OF FINDING THE NODE TO BE DELETED
-
-        // deleting any type of root node
-        if(focusNode == root){
-            if(focusNode.getLeft() == null && focusNode.getRight() == null){
-                root = null;
-            } else if(focusNode.getLeft() == null){
-                root = focusNode.getRight();
-            } else if(focusNode.getRight() == null){
-                root = focusNode.getLeft();
-            } else { // still have to figure out this last case
-                // we go left first
-                TreeNode<E> rightMost = focusNode.getLeft();
-                TreeNode<E> parentOfRightMost = focusNode;
-                if(rightMost.getLeft() == null && rightMost.getRight() == null){
-                    rightMost.setRight(focusNode.getRight());
-                } else if (rightMost.getLeft() == null){
-                    while(rightMost.getRight() != null){
-                        parentOfRightMost = rightMost;
-                        rightMost = rightMost.getRight();
-                    }
-                    rightMost.setLeft(root.getLeft());
-                    rightMost.setRight(root.getRight());
-                    parentOfRightMost.setRight(null);
-                } else if(rightMost.getRight() == null){
-                    rightMost.setRight(root.getRight());
-                } else {
-                    while(rightMost.getRight() != null){
-                        parentOfRightMost = rightMost;
-                        rightMost = rightMost.getRight();
-                    }
-                    rightMost.setLeft(root.getLeft());
-                    rightMost.setRight(root.getRight());
-                    parentOfRightMost.setRight(null);
-                }
-                root = rightMost;
-            }
-            System.out.println(e + " has been deleted!");
-            size--;
+        if(root==null){
             return true;
-        } // END OF DELETING ANY ROOT NODE
+        }
+        else{
+            in.push(root);
 
-        // Deleting every other node besides the root node
-        if(focusNode.getLeft() == null && focusNode.getRight() == null){
-            if(isItOnLeft){
-                parent.setLeft(null);
-            } else {
-                parent.setRight(null);
+            while(in.isEmpty()==false){
+
             }
-        } else if(focusNode.getLeft() == null){
-            if(isItOnLeft){
-                parent.setLeft(focusNode.getRight());
-            } else {
-                parent.setRight(focusNode.getRight());
-            }
-        } else if(focusNode.getRight() == null){
-            if(isItOnLeft){
-                parent.setLeft(focusNode.getLeft());
-            } else {
-                parent.setRight(focusNode.getLeft());
-            }
-        } else {
-            // we go down to the left
-            TreeNode<E> rightMost = focusNode.getLeft();
-            TreeNode<E> parentOfRightMost = focusNode;
-            // if we cannot go right after going down left once
-            if(rightMost.getRight() == null && rightMost.getLeft() == null){
-                rightMost.setRight(focusNode.getRight());
-            } else if (rightMost.getLeft() == null){
-                while(rightMost.getRight() != null){
-                    parentOfRightMost = rightMost;
-                    rightMost = rightMost.getRight();
-                }
-                parentOfRightMost.setRight(null);
-                rightMost.setLeft(focusNode.getLeft());
-                rightMost.setRight(focusNode.getRight());
-            } else if (rightMost.getRight() == null){
-                rightMost.setRight(focusNode.getRight());
-            } else {
-                while(rightMost.getRight() != null){
-                    parentOfRightMost = rightMost;
-                    rightMost = rightMost.getRight();
-                }
-                parentOfRightMost.setRight(rightMost.getLeft());
-                rightMost.setLeft(focusNode.getLeft());
-                rightMost.setRight(focusNode.getRight());
-            }
-            // we attach it to the parent node's appropriate branch
-            if(isItOnLeft){
-                parent.setLeft(rightMost);
-            } else {
-                parent.setRight(rightMost);
-            }
-        }// END OF DELETING ANY NODE BESIDES THE ROOT NODE
-        System.out.println("\n" + e + " has been deleted!");
-        size--;
+        }
+        */
         return true;
     }
 
@@ -224,9 +124,46 @@ public class  BST<E extends Comparable<E>> implements TreeInterface<E> {
     public int getSize(){ return size; }// end getSize
 
     // (Implement postorder traversal without using recursion)
-    public ArrayList<E>  postorderNoRecursion()
-    {
-        ArrayList<E> nonRecursivePostorder= new ArrayList<>();
+    public ArrayList<E>  postorderNoRecursion(){
+
+        /**
+         * TODO: INSERT YOUR CODE HERE
+         * FIND THE POST ORDER TRAVERSAL OF THE TREE AND RETUN THE RESULT TRAVEL SEQUENCE IN ARRAYLIST postOrderTraversal
+         */
+        //This code will go from the first node from left of root and place each left node on the "in" Stack
+        //Then it will place the node into the "post" Stack when it meets the condition to be in Post Order
+        //If the Node does not meet the requirements to be placed into Post order it will be placed back into the stack
+        //and the nodes childern will be placed to top of the stack. Continues until stack has no nodes. Repeat on right side.
+        //Then all nodes on the final stack will be transfered to an ArrayList
+        ArrayList<E> nonRecursivePostorder = new ArrayList<>();
+        Stack<TreeNode> post = new Stack<TreeNode>();
+        Stack<TreeNode> flipped = new Stack<TreeNode>();
+        Stack<TreeNode> in = new Stack<TreeNode>();
+        TreeNode current = root;
+        TreeNode temp = root;
+        if(root==null){
+            return null;
+        }
+        else{
+            in.push(root);
+        }
+
+        while(in.isEmpty()==false){
+            current = in.pop();
+            post.push(current);
+
+            if(current.getLeft()!=null){
+                in.push(current.getLeft());
+            }
+
+                if(current.getRight()!=null){
+                in.push(current.getRight());
+                }
+
+        }
+        while(post.isEmpty()==false){
+            nonRecursivePostorder.add((E) post.pop().getElement());
+        }
 
         return nonRecursivePostorder;
     }
@@ -317,112 +254,7 @@ public class  BST<E extends Comparable<E>> implements TreeInterface<E> {
 
     //Aram Balayan
     public ArrayList<E> postorder() {
-        /**
-         * TODO: INSERT YOUR CODE HERE
-         * FIND THE POST ORDER TRAVERSAL OF THE TREE AND RETUN THE RESULT TRAVEL SEQUENCE IN ARRAYLIST postOrderTraversal
-         */
-        //This code will go from the first node from left of root and place each left node on the "in" Stack
-        //Then it will place the node into the "post" Stack when it meets the condition to be in Post Order
-        //If the Node does not meet the requirements to be placed into Post order it will be placed back into the stack
-        //and the nodes childern will be placed to top of the stack. Continues until stack has no nodes. Repeat on right side.
-        //Then all nodes on the final stack will be transfered to an ArrayList
-        ArrayList<E> postOrderTraversal = new ArrayList<>();
-        Stack<TreeNode> post = new Stack<TreeNode>();
-        Stack<TreeNode> flipped = new Stack<TreeNode>();
-        Stack<TreeNode> in = new Stack<TreeNode>();
-        TreeNode current = root;
-        if(root==null){
-            return null;
-        }
-        if(root.getLeft()!=null) {
-            current=root.getLeft();
-                while (current != null) {
-                    in.push(current);
-                    current = current.getLeft();
-                }
-            while(in.isEmpty()==false) {
-                current = in.pop();
-                if (current.getRight() == null && current.getLeft()==null) {
-                    post.push(current);
-                }
-                else if (current.getLeft()==post.peek()) {
-                    if(current.getRight()==null){
-                        post.push(current);
-                    }
-                    else{
-                        in.push(current);
-                       in.push(current.getRight());
-                    }
-                }
-                else if(current.getRight()==post.peek()){
-                    post.push(current);
-                }
 
-                else if(current.getLeft()!=post.peek() && current.getRight()!=post.peek()) {
-                    if(current.getLeft()!=null){
-                        in.push(current);
-                        in.push(current.getLeft());
-                    }
-                    else if(current.getRight()!=null){
-                        in.push(current);
-                        in.push(current.getRight());
-                    }
-                    else
-                        in.push(current);
-                    in.push(current.getRight());
-                }
-            }
-        }
-//this is just the same code but for the right side of the tree.
-        if(root.getRight()!=null){
-            in.empty();
-            current=root.getRight();
-            while (current != null) {
-                in.push(current);
-                current = current.getLeft();
-            }
-            while(in.isEmpty()==false) {
-                current = in.pop();
-                if (current.getRight() == null && current.getLeft()==null) {
-                    post.push(current);
-                }
-                else if (current.getLeft()==post.peek()) {
-                    if(current.getRight()==null){
-                        post.push(current);
-                    }
-                    else{
-                        in.push(current);
-                        in.push(current.getRight());
-                    }
-                }
-                else if(current.getRight()==post.peek()){
-                    post.push(current);
-                }
-                else if(current.getLeft()!=post.peek() && current.getRight()!=post.peek()) {
-                    if(current.getLeft()!=null){
-                        in.push(current);
-                        in.push(current.getLeft());
-                    }
-                    else if(current.getRight()!=null){
-                        in.push(current);
-                        in.push(current.getRight());
-                }
-                else
-                    in.push(current);
-                    in.push(current.getRight());
-                }
-            }
-            post.push(root);
-        }
-        //Transfer stack to ArrayList
-        while(post.empty()==false){
-            flipped.add(post.pop());
-        }
-        //Flip stack since it is PostOrder but backwards
-        while(flipped.empty()==false){
-            postOrderTraversal.add((E) flipped.pop().getElement());
-        }
-        //Return array list
         return postOrderTraversal;
     }
 

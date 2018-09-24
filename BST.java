@@ -101,7 +101,121 @@ public class  BST<E extends Comparable<E>> implements TreeInterface<E> {
     }
 
     public boolean delete(E e) {
+        TreeNode<E> focusNode = root;
+        TreeNode<E> parent = root;
 
+        // finding the node to be deleted
+        Boolean isItOnLeft = true;
+        if(root == null){
+            System.out.println("Empty tree; node not found.");
+            return false;
+        } else{
+            while(e.compareTo(focusNode.getElement()) != 0){
+                parent = focusNode;
+                if(e.compareTo(focusNode.getElement()) < 0){
+                    focusNode = focusNode.getLeft();
+                    isItOnLeft = true;
+                } else{
+                    focusNode = focusNode.getRight();
+                    isItOnLeft = false;
+                }
+            }
+        } // END OF FINDING THE NODE TO BE DELETED
+
+        // deleting any type of root node
+        if(focusNode == root){
+            if(focusNode.getLeft() == null && focusNode.getRight() == null){
+                root = null;
+            } else if(focusNode.getLeft() == null){
+                root = focusNode.getRight();
+            } else if(focusNode.getRight() == null){
+                root = focusNode.getLeft();
+            } else { // still have to figure out this last case
+                // we go left first
+                TreeNode<E> rightMost = focusNode.getLeft();
+                TreeNode<E> parentOfRightMost = focusNode;
+                if(rightMost.getLeft() == null && rightMost.getRight() == null){
+                    rightMost.setRight(focusNode.getRight());
+                } else if (rightMost.getLeft() == null){
+                    while(rightMost.getRight() != null){
+                        parentOfRightMost = rightMost;
+                        rightMost = rightMost.getRight();
+                    }
+                    rightMost.setLeft(root.getLeft());
+                    rightMost.setRight(root.getRight());
+                    parentOfRightMost.setRight(null);
+                } else if(rightMost.getRight() == null){
+                    rightMost.setRight(root.getRight());
+                } else {
+                    while(rightMost.getRight() != null){
+                        parentOfRightMost = rightMost;
+                        rightMost = rightMost.getRight();
+                    }
+                    rightMost.setLeft(root.getLeft());
+                    rightMost.setRight(root.getRight());
+                    parentOfRightMost.setRight(null);
+                }
+                root = rightMost;
+            }
+            System.out.println(e + " has been deleted!");
+            size--;
+            return true;
+        } // END OF DELETING ANY ROOT NODE
+
+        // Deleting every other node besides the root node
+        if(focusNode.getLeft() == null && focusNode.getRight() == null){
+            if(isItOnLeft){
+                parent.setLeft(null);
+            } else {
+                parent.setRight(null);
+            }
+        } else if(focusNode.getLeft() == null){
+            if(isItOnLeft){
+                parent.setLeft(focusNode.getRight());
+            } else {
+                parent.setRight(focusNode.getRight());
+            }
+        } else if(focusNode.getRight() == null){
+            if(isItOnLeft){
+                parent.setLeft(focusNode.getLeft());
+            } else {
+                parent.setRight(focusNode.getLeft());
+            }
+        } else {
+            // we go down to the left
+            TreeNode<E> rightMost = focusNode.getLeft();
+            TreeNode<E> parentOfRightMost = focusNode;
+            // if we cannot go right after going down left once
+            if(rightMost.getRight() == null && rightMost.getLeft() == null){
+                rightMost.setRight(focusNode.getRight());
+            } else if (rightMost.getLeft() == null){
+                while(rightMost.getRight() != null){
+                    parentOfRightMost = rightMost;
+                    rightMost = rightMost.getRight();
+                }
+                parentOfRightMost.setRight(null);
+                rightMost.setLeft(focusNode.getLeft());
+                rightMost.setRight(focusNode.getRight());
+            } else if (rightMost.getRight() == null){
+                rightMost.setRight(focusNode.getRight());
+            } else {
+                while(rightMost.getRight() != null){
+                    parentOfRightMost = rightMost;
+                    rightMost = rightMost.getRight();
+                }
+                parentOfRightMost.setRight(rightMost.getLeft());
+                rightMost.setLeft(focusNode.getLeft());
+                rightMost.setRight(focusNode.getRight());
+            }
+            // we attach it to the parent node's appropriate branch
+            if(isItOnLeft){
+                parent.setLeft(rightMost);
+            } else {
+                parent.setRight(rightMost);
+            }
+        }// END OF DELETING ANY NODE BESIDES THE ROOT NODE
+        System.out.println("\n" + e + " has been deleted!");
+        size--;
         return true;
     }
 

@@ -100,6 +100,7 @@ public class  BST<E extends Comparable<E>> implements TreeInterface<E> {
         }
     }
 
+    By: Jorge Martinez
     public boolean delete(E e) {
         TreeNode<E> focusNode = root;
         TreeNode<E> parent = root;
